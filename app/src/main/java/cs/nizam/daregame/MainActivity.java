@@ -3,17 +3,22 @@ package cs.nizam.daregame;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     // Remove the below line after defining your own ad unit ID.
-    private static final String TOAST_TEXT = "Test ads are being shown. "
-            + "To show live ads, replace the ad unit ID in res/values/strings.xml with your own ad unit ID.";
+    private static final String TOAST_TEXT = "Please enter thr number of participants and click start";
 
+    EditText mText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +33,21 @@ public class MainActivity extends AppCompatActivity {
 
         // Toasts the test ad message on the screen. Remove this after defining your own ad unit ID.
         Toast.makeText(this, TOAST_TEXT, Toast.LENGTH_LONG).show();
+        mText = (EditText) findViewById(R.id.partno);
+        findViewById(R.id.imageView1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!TextUtils.isEmpty(mText.getText())) {
+                    String s=mText.getText().toString();
+                    Intent i=new Intent(getBaseContext(),Game.class);
+                    i.putExtra("number", s);
+                    startActivity(i);
+                    finish();
+                } else {
+                    Toast.makeText(MainActivity.this, TOAST_TEXT, Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
 

@@ -1,9 +1,16 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        Dare {
+            keyAlias 'Dare'
+            keyPassword 'nichu5463'
+            storeFile file('/home/nizamcs/Signs/dare.jks')
+            storePassword 'nichu5463'
+        }
+    }
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
-
     defaultConfig {
         applicationId "cs.nizam.daregame"
         minSdkVersion 10
@@ -13,8 +20,9 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.Dare
         }
     }
 }

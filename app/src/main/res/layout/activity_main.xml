@@ -5,10 +5,12 @@
     android:layout_height="match_parent"
     tools:context="cs.nizam.daregame.MainActivity">
 
-    <TextView
+    <ImageView android:id="@+id/imageView1"
+        android:layout_height="100dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:src="@drawable/start_button"
+        android:layout_above="@+id/partno"
+        android:layout_centerHorizontal="true" />
 
     <!-- view for AdMob Banner Ad -->
     <com.google.android.gms.ads.AdView
@@ -19,5 +21,15 @@
         android:layout_centerHorizontal="true"
         ads:adSize="BANNER"
         ads:adUnitId="@string/banner_ad_unit_id" />
+
+    <EditText
+        android:id="@+id/partno"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="8"
+        android:hint="No. of participants"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true" />
 
 </RelativeLayout>
