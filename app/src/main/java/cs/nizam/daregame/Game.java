@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -136,21 +137,42 @@ public class Game extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                int i = ran.nextInt(actionSize);
-                i++;
-                if (doset.size() < actionSize) {
-                    if (!doset.contains(i)) {
+                if (act != null && act.size() > 0) {
+                    int i = ran.nextInt(actionSize);
+                    i++;
+                    if (doset.size() < actionSize) {
+                        if (!doset.contains(i)) {
+                            tact.setText(act.get(i).toString());
+                            doset.add(i);
+                            animate();
+                        } else {
+                            acts.performClick();
+                        }
+                    } else {
+                        doset.clear();
                         tact.setText(act.get(i).toString());
                         doset.add(i);
                         animate();
-                    } else {
-                        acts.performClick();
                     }
                 } else {
-                    doset.clear();
-                    tact.setText(act.get(i).toString());
-                    doset.add(i);
-                    animate();
+                    AlertDialog dialog = new AlertDialog.Builder(Game.this)
+                            .setMessage("Actions Empty. Please add some in settings!")
+                            .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    finish();
+                                }
+                            })
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Intent intent = new Intent(Game.this, MainActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                            })
+                            .create();
+                    dialog.show();
                 }
             }
 
