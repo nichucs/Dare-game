@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     // Remove the below line after defining your own ad unit ID.
-    private static final String TOAST_TEXT = "Please enter thr number of participants and click start";
+    private static final String TOAST_TEXT = "Please enter the number of participants and click start";
 
     EditText mText;
 
