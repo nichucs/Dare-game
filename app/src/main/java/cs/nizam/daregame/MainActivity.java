@@ -74,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.action_settings :
+                Intent i = new Intent(MainActivity.this, DareList.class);
+                startActivity(i);
                 break;
             case R.id.action_help :
                 break;
