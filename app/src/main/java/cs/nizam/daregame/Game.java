@@ -17,6 +17,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
@@ -34,18 +35,17 @@ public class Game extends AppCompatActivity {
     ImageView img;
     RelativeLayout rl;
     Random ran=new Random();
+    private DatabaseHandler db;
+    private int actionSize;
+
     @Override
     protected void onResume() {
-        act.put(1, "Song");
-        act.put(2, "Duet");
-        act.put(3, "Dialogue");
-        act.put(4, "Classical song");
-        act.put(5, "Ramp walk");
-        act.put(6, "Stay 1 min without laughing");
-        act.put(7, "kooooi...");
-        act.put(8, "Do whatever you like");
-        act.put(9, "Love proposal");
-
+        List<String> actions = db.getAllActions();
+        actionSize = actions.size();
+        for (int i = 0; i < actions.size(); i++) {
+            String action = actions.get(i);
+            act.put(i+1,action);
+        }
         animats.put(1, R.anim.anim);
         animats.put(2, R.anim.xmas1);
         animats.put(3, R.anim.xmas2);
@@ -73,6 +73,7 @@ public class Game extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game);
+        db = new DatabaseHandler(this);
 
         // Load an ad into the AdMob banner view.
         AdView adView = (AdView) findViewById(R.id.adView);
@@ -135,13 +136,13 @@ public class Game extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                int i = ran.nextInt(9);
+                int i = ran.nextInt(actionSize);
                 i++;
-                if (doset.size() < 9) {
+                if (doset.size() < actionSize) {
                     if (!doset.contains(i)) {
                         tact.setText(act.get(i).toString());
                         doset.add(i);
-                        animate(i);
+                        animate();
                     } else {
                         acts.performClick();
                     }
@@ -149,11 +150,13 @@ public class Game extends AppCompatActivity {
                     doset.clear();
                     tact.setText(act.get(i).toString());
                     doset.add(i);
-                    animate(i);
+                    animate();
                 }
             }
 
-            private void animate(int i) {
+            private void animate() {
+                int i = ran.nextInt(animats.size());
+                i++;
                 Animation anm = AnimationUtils.loadAnimation(getBaseContext(), animats.get(i));
                 img.setImageResource(pics.get(i));
                 img.setAnimation(anm);
