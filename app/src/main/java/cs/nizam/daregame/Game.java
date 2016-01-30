@@ -87,7 +87,7 @@ public class Game extends AppCompatActivity {
         adView.loadAd(adRequest);
 
         mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+        mInterstitialAd.setAdUnitId("ca-app-pub-6021641109787388/1105750152");
 
         mInterstitialAd.setAdListener(new AdListener() {
             @Override
@@ -143,7 +143,7 @@ public class Game extends AppCompatActivity {
                     i++;
                     if (doset.size() < actionSize) {
                         if (!doset.contains(i)) {
-                            tact.setText(act.get(i).toString());
+                            tact.setText(act.get(i));
                             doset.add(i);
                             animate();
                         } else {
@@ -151,7 +151,7 @@ public class Game extends AppCompatActivity {
                         }
                     } else {
                         doset.clear();
-                        tact.setText(act.get(i).toString());
+                        tact.setText(act.get(i));
                         doset.add(i);
                         animate();
                     }
