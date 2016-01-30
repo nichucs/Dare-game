@@ -143,7 +143,7 @@ public class Game extends AppCompatActivity {
                     i++;
                     if (doset.size() < actionSize) {
                         if (!doset.contains(i)) {
-                            tact.setText(act.get(i).toString());
+                            tact.setText(act.get(i));
                             doset.add(i);
                             animate();
                         } else {
@@ -151,7 +151,7 @@ public class Game extends AppCompatActivity {
                         }
                     } else {
                         doset.clear();
-                        tact.setText(act.get(i).toString());
+                        tact.setText(act.get(i));
                         doset.add(i);
                         animate();
                     }
