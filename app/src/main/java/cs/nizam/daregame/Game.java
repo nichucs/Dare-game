@@ -12,10 +12,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +25,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class Game extends AppCompatActivity {
+
+    InterstitialAd mInterstitialAd;
     HashMap<Integer, String> act= new HashMap<>();
     HashMap<Integer, Integer> animats= new HashMap<>();
     HashMap<Integer, Integer> pics= new HashMap<>();
@@ -38,6 +41,7 @@ public class Game extends AppCompatActivity {
     Random ran=new Random();
     private DatabaseHandler db;
     private int actionSize;
+    private boolean reload;
 
     @Override
     protected void onResume() {
@@ -82,6 +86,19 @@ public class Game extends AppCompatActivity {
                 .setRequestAgent("android_studio:ad_template").build();
         adView.loadAd(adRequest);
 
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                requestNewInterstitial();
+                beginPlayingGame();
+            }
+        });
+
+        requestNewInterstitial();
+
         whos=(Button) findViewById(R.id.btnwho);
         acts=(Button) findViewById(R.id.btnact);
         twho=(TextView) findViewById(R.id.who);
@@ -111,23 +128,7 @@ public class Game extends AppCompatActivity {
                     } else
                         whos.performClick();
                 } else {
-                    AlertDialog dialog = new AlertDialog.Builder(Game.this)
-                            .setMessage("End of the game. \n Start over?")
-                            .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    finish();
-                                }
-                            })
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    Intent intent = new Intent(Game.this, MainActivity.class);
-                                    startActivity(intent);
-                                    finish();
-                                }
-                            })
-                            .create();
+                    AlertDialog dialog = getAlertDialog("End of the game. \n Start over?");
                     dialog.show();
                 }
             }
@@ -155,23 +156,7 @@ public class Game extends AppCompatActivity {
                         animate();
                     }
                 } else {
-                    AlertDialog dialog = new AlertDialog.Builder(Game.this)
-                            .setMessage("Actions Empty. Please add some in settings!")
-                            .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    finish();
-                                }
-                            })
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    Intent intent = new Intent(Game.this, MainActivity.class);
-                                    startActivity(intent);
-                                    finish();
-                                }
-                            })
-                            .create();
+                    AlertDialog dialog = getAlertDialog("Actions Empty. Please add some in settings!");
                     dialog.show();
                 }
             }
@@ -186,5 +171,49 @@ public class Game extends AppCompatActivity {
                 whos.setEnabled(true);
             }
         });
+    }
+
+    private void beginPlayingGame() {
+        if (reload) {
+            Intent intent = new Intent(Game.this, MainActivity.class);
+            startActivity(intent);
+        }
+        finish();
+    }
+
+    private AlertDialog getAlertDialog(String message) {
+        return new AlertDialog.Builder(Game.this)
+                .setMessage(message)
+                .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        reload = false;
+                        if (mInterstitialAd.isLoaded()) {
+                            mInterstitialAd.show();
+                        } else {
+                            beginPlayingGame();
+                        }
+                    }
+                })
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        reload = true;
+                        if (mInterstitialAd.isLoaded()) {
+                            mInterstitialAd.show();
+                        }else {
+                            beginPlayingGame();
+                        }
+                    }
+                })
+                .create();
+    }
+
+    private void requestNewInterstitial() {
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+
+        mInterstitialAd.loadAd(adRequest);
     }
 }
