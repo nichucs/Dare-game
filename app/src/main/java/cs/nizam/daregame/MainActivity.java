@@ -7,18 +7,23 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.lang.ref.WeakReference;
 
 public class MainActivity extends AppCompatActivity {
     // Remove the below line after defining your own ad unit ID.
     private static final String TOAST_TEXT = "Please enter the number of participants and click start";
 
     EditText mText;
+    private View mStart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,12 +38,15 @@ public class MainActivity extends AppCompatActivity {
         // Toasts the test ad message on the screen. Remove this after defining your own ad unit ID.
         Toast.makeText(this, TOAST_TEXT, Toast.LENGTH_LONG).show();
         mText = (EditText) findViewById(R.id.partno);
-        findViewById(R.id.imageView1).setOnClickListener(new View.OnClickListener() {
+        mStart = findViewById(R.id.imageView1);
+
+        mText.setOnEditorActionListener(ActionListener.newInstance(this));
+        mStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!TextUtils.isEmpty(mText.getText())) {
-                    String s=mText.getText().toString();
-                    Intent i=new Intent(getBaseContext(),Game.class);
+                    String s = mText.getText().toString();
+                    Intent i = new Intent(getBaseContext(), Game.class);
                     i.putExtra("number", s);
                     startActivity(i);
                     finish();
@@ -66,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.action_settings :
+                Intent i = new Intent(MainActivity.this, DareList.class);
+                startActivity(i);
                 break;
             case R.id.action_help :
                 break;
@@ -73,5 +83,31 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+    private static final class ActionListener implements TextView.OnEditorActionListener {
+        private final WeakReference<MainActivity> mainActivityWeakReference;
 
+        public static ActionListener newInstance(MainActivity mainActivity) {
+            WeakReference<MainActivity> mainActivityWeakReference = new WeakReference<>(mainActivity);
+            return new ActionListener(mainActivityWeakReference);
+        }
+
+        private ActionListener(WeakReference<MainActivity> mainActivityWeakReference) {
+            this.mainActivityWeakReference = mainActivityWeakReference;
+        }
+
+        @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            MainActivity mainActivity = mainActivityWeakReference.get();
+            if (mainActivity != null) {
+                if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_GO) {
+                    mainActivity.startGame();
+                }
+            }
+            return true;
+        }
+    }
+
+    private void startGame() {
+        mStart.performClick();
+    }
 }

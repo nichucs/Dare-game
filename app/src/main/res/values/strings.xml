@@ -11,4 +11,6 @@
     <string name="banner_ad_unit_id">ca-app-pub-6021641109787388/9935260156</string>
     <string name="banner_ad_game_id">ca-app-pub-6021641109787388/3749125758</string>
     <string name="action_help">Help</string>
+    <string name="title_activity_dare_list">DareList</string>
+    <string name="add">Add new</string>
 </resources>

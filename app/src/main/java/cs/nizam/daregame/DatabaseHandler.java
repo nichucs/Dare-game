@@ -20,11 +20,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "actionDB";
 
     // Table name
-    private static final String TABLE_ACTION = "action";
+    public static final String TABLE_ACTION = "action";
 
     // Columns
-    private static final String KEY_ID = "id";
-    private static final String KEY_ACTION = "todo";
+    public static final String KEY_ID = "_id";
+    public static final String KEY_ACTION = "todo";
 
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -33,7 +33,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_ACTIONS_TABLE = "CREATE TABLE " + TABLE_ACTION + "("
-                + KEY_ID + " INTEGER PRIMARY KEY,"
+                + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + KEY_ACTION + " TEXT" + ")";
         db.execSQL(CREATE_ACTIONS_TABLE);
         addAction(db,"Song");
@@ -44,7 +44,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         addAction(db,"Stay 1 min without laughing");
         addAction(db,"kooooi...");
         addAction(db,"Do whatever you like");
-        addAction(db,"Love proposal");
+        addAction(db, "Love proposal");
     }
 
     @Override
@@ -108,18 +108,26 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 contactList.add(cursor.getString(1));
             } while (cursor.moveToNext());
         }
-
+        db.close();
         // return contact list
         return contactList;
+    }
+
+    public Cursor getCursor() {
+        String selectQuery = "SELECT  * FROM " + TABLE_ACTION;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery(selectQuery, null);
     }
     // Getting actions Count
     public int getActionsCount() {
         String countQuery = "SELECT  * FROM " + TABLE_ACTION;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
+        final int count = cursor.getCount();
         cursor.close();
 
         // return count
-        return cursor.getCount();
+        return count;
     }
 }
