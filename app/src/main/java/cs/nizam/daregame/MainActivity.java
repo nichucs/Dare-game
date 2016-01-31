@@ -71,13 +71,15 @@ public class MainActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
+        Intent i;
         switch (id) {
             case R.id.action_settings :
-                Intent i = new Intent(MainActivity.this, DareList.class);
+                i = new Intent(MainActivity.this, DareList.class);
                 startActivity(i);
                 break;
             case R.id.action_help :
+                i = new Intent(MainActivity.this, HelpActivity.class);
+                startActivity(i);
                 break;
         }
 

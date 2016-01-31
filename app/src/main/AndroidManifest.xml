@@ -19,8 +19,8 @@
             android:value="@integer/google_play_services_version" />
 
         <provider
-            android:authorities="cs.nizam.daregame.providers.ActionsContentProvider"
-            android:name="cs.nizam.daregame.providers.ActionsContentProvider"/>
+            android:name=".providers.ActionsContentProvider"
+            android:authorities="cs.nizam.daregame.providers.ActionsContentProvider" />
 
         <activity
             android:name=".MainActivity"
@@ -45,6 +45,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cs.nizam.daregame.MainActivity" />
         </activity>
+        <activity
+            android:name=".HelpActivity"
+            android:label="@string/title_activity_help"></activity>
     </application>
 
 </manifest>
