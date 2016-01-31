@@ -10,7 +10,7 @@
         android:layout_height="80dp"
         android:padding="8dp"
         android:background="#ffffeb3b"
-        android:id="@+id/shareview"
+        android:id="@+id/editview"
         android:orientation="horizontal" >
 
         <ImageView
@@ -19,7 +19,7 @@
             android:layout_margin="20dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@android:drawable/ic_menu_share"/>
+            android:src="@android:drawable/ic_menu_edit"/>
     </RelativeLayout>
 
     <RelativeLayout

@@ -1,5 +1,6 @@
 package cs.nizam.daregame;
 
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -12,6 +13,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+
+import cs.nizam.daregame.providers.ActionsContentProvider;
 
 public class DareList extends AppCompatActivity {
 
@@ -27,8 +30,7 @@ public class DareList extends AppCompatActivity {
         add = (Button) findViewById(R.id.new_button);
 
         // Here we query database
-        final DatabaseHandler databaseHandler = new DatabaseHandler(this);
-        final Cursor mCursor = databaseHandler.getCursor();
+        final Cursor mCursor = getCursor();
         listView = (ListView) findViewById(R.id.action_list);
         new Handler().post(new Runnable() {
             @Override
@@ -57,10 +59,14 @@ public class DareList extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         String m_Text = input.getText().toString();
                         if (!TextUtils.isEmpty(m_Text)) {
-                            databaseHandler.addAction(m_Text);
-                            adapter.setCursor(databaseHandler.getCursor());
+//                            databaseHandler.addAction(m_Text);
+                            ContentValues values = new ContentValues();
+                            values.put(DatabaseHandler.KEY_ACTION,m_Text);
+                            getContentResolver().insert(ActionsContentProvider.CONTENT_URI, values);
+
+                            adapter.swapCursor(getCursor());
                             adapter.notifyDataSetChanged();
-                            listView.smoothScrollToPosition(databaseHandler.getActionsCount()-1);
+                            listView.smoothScrollToPosition(adapter.getCount()-1);
                         }
                     }
                 });
@@ -74,6 +80,20 @@ public class DareList extends AppCompatActivity {
                 builder.show();
             }
         });
+    }
+
+    private Cursor getCursor() {
+        // Your database schema
+        String[] mProjection = {
+                DatabaseHandler.KEY_ID,
+                DatabaseHandler.KEY_ACTION,
+        };
+        return getContentResolver().query(
+                ActionsContentProvider.CONTENT_URI,
+                mProjection,
+                null,
+                null,
+                null);
     }
 
 }

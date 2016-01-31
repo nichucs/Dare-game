@@ -33,7 +33,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_ACTIONS_TABLE = "CREATE TABLE " + TABLE_ACTION + "("
-                + KEY_ID + " INTEGER PRIMARY KEY,"
+                + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + KEY_ACTION + " TEXT" + ")";
         db.execSQL(CREATE_ACTIONS_TABLE);
         addAction(db,"Song");

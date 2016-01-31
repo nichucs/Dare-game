@@ -1,32 +1,41 @@
 package cs.nizam.daregame;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
+import android.support.v7.app.AlertDialog;
+import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import cs.nizam.daregame.providers.ActionsContentProvider;
 
 /**
  * Created by nizamcs on 30/1/16.
  */
 public class ActionsListAdapter extends CursorAdapter {
 
+    private final Context mContext;
     private int layoutResource;
     private LayoutInflater inflater;
     private float density = 2f;
     private ListView listView;
-    private Cursor cursor;
 
     public ActionsListAdapter(Context context, Cursor c, int flags, int layout) {
         super(context, c, flags);
         layoutResource = layout;
+        mContext = context;
         inflater = LayoutInflater.from(context);
     }
 
@@ -42,6 +51,8 @@ public class ActionsListAdapter extends CursorAdapter {
 
         /* set values here */
         holder.actionText.setText(entry);
+        int pos = cursor.getPosition();
+        workingView.setTag(pos);
 
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) holder.mainView.getLayoutParams();
         params.rightMargin = 0;
@@ -59,7 +70,7 @@ public class ActionsListAdapter extends CursorAdapter {
             holder = new ObjectHolder();
             holder.mainView = (LinearLayout)workingView.findViewById(R.id.audio_object_mainview);
             holder.deleteView = (RelativeLayout)workingView.findViewById(R.id.deleteview);
-            holder.shareView = (RelativeLayout)workingView.findViewById(R.id.shareview);
+            holder.editView = (RelativeLayout)workingView.findViewById(R.id.editview);
 
             /* initialize other views here */
             holder.actionText = (TextView) workingView.findViewById(R.id.action_text);
@@ -76,14 +87,10 @@ public class ActionsListAdapter extends CursorAdapter {
         listView = view;
     }
 
-    public void setCursor(Cursor cursor) {
-        this.cursor = cursor;
-    }
-
     public static class ObjectHolder {
         public LinearLayout mainView;
         public RelativeLayout deleteView;
-        public RelativeLayout shareView;
+        public RelativeLayout editView;
 
         /* other views here */
         public TextView actionText;
@@ -133,16 +140,13 @@ public class ActionsListAdapter extends CursorAdapter {
                     float deltaX = upX - downX;
                     if (deltaX > MIN_DISTANCE) {
                         // left or right
-//                        swipeRemove();
-                        Log.d("Nzm", "TODO:delete");
+                        swipeRemove((Integer) v.getTag());
+                    } else if (deltaX < (-1*MIN_DISTANCE)) {
+                        swipeEdit((Integer) v.getTag());
                     } else {
                         swipe(0);
-                        Log.d("Nzm", "TODO:Don't delete");
                     }
 
-                    if (deltaX < (-1*MIN_DISTANCE)) {
-                        Log.d("Nzm", "TODO:edit");
-                    }
 
                     if (listView != null) {
                         listView.requestDisallowInterceptTouchEvent(false);
@@ -168,11 +172,65 @@ public class ActionsListAdapter extends CursorAdapter {
             animationView.setLayoutParams(params);
         }
 
-        private void swipeRemove() {
-//            remove(getItem(position));
+        private void swipeRemove(int pos) {
+            getCursor().moveToPosition(pos);
+            String id = getCursor().getString(getCursor().getColumnIndex(DatabaseHandler.KEY_ID));
+            Log.d("Nzm","id="+id);
+            mContext.getContentResolver().delete(ActionsContentProvider.CONTENT_URI, "_id = " + id, null);
+            swapCursor(mContext.getContentResolver().query(
+                    ActionsContentProvider.CONTENT_URI,
+                    null,
+                    null,
+                    null,
+                    null));
             notifyDataSetChanged();
         }
+        private void swipeEdit(int pos) {
+            getCursor().moveToPosition(pos);
+            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+            builder.setTitle("New Dare item");
+
+            // Set up the input
+            final EditText input = new EditText(mContext);
+            // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            builder.setView(input);
+
+            // Set up the buttons
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String m_Text = input.getText().toString();
+                    String id = getCursor().getString(getCursor().getColumnIndex(DatabaseHandler.KEY_ID));
+                    Log.d("Nzm","id="+id);
+                    if (!TextUtils.isEmpty(m_Text)) {
+//                            databaseHandler.addAction(m_Text);
+                        ContentValues values = new ContentValues();
+                        values.put(DatabaseHandler.KEY_ACTION, m_Text);
+                        mContext.getContentResolver().update(ActionsContentProvider.CONTENT_URI, values,
+                                "_id=" + id, null);
+
+                        swapCursor(mContext.getContentResolver().query(
+                                ActionsContentProvider.CONTENT_URI,
+                                null,
+                                null,
+                                null,
+                                null));
+                        notifyDataSetChanged();
+                    }
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            builder.show();
+        }
     }
+
 
     // swipe detector class here
 }
