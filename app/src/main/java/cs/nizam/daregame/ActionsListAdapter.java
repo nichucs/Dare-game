@@ -188,7 +188,7 @@ public class ActionsListAdapter extends CursorAdapter {
         private void swipeEdit(int pos) {
             getCursor().moveToPosition(pos);
             AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-            builder.setTitle("New Dare item");
+            builder.setTitle("Edit Dare item");
 
             // Set up the input
             final EditText input = new EditText(mContext);
