@@ -187,6 +187,8 @@ public class ActionsListAdapter extends CursorAdapter {
         }
         private void swipeEdit(int pos) {
             getCursor().moveToPosition(pos);
+            String action = getCursor().getString(getCursor().getColumnIndex(DatabaseHandler.KEY_ACTION));
+
             AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
             builder.setTitle("Edit Dare item");
 
@@ -194,6 +196,7 @@ public class ActionsListAdapter extends CursorAdapter {
             final EditText input = new EditText(mContext);
             // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
             input.setInputType(InputType.TYPE_CLASS_TEXT);
+            input.setText(action);
             builder.setView(input);
 
             // Set up the buttons
