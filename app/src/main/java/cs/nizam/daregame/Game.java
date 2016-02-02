@@ -17,6 +17,8 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +44,7 @@ public class Game extends AppCompatActivity {
     private DatabaseHandler db;
     private int actionSize;
     private boolean reload;
+    private Tracker mTracker;
 
     @Override
     protected void onResume() {
@@ -73,12 +76,15 @@ public class Game extends AppCompatActivity {
         start=1;
 
         super.onResume();
+        mTracker.setScreenName(AnalyticsTrackers.GAME);
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game);
         db = new DatabaseHandler(this);
+        mTracker = AnalyticsTrackers.getInstance().get(AnalyticsTrackers.Target.APP);
 
         // Load an ad into the AdMob banner view.
         AdView adView = (AdView) findViewById(R.id.adView);

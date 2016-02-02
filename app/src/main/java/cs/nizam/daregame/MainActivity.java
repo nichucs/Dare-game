@@ -2,6 +2,8 @@ package cs.nizam.daregame;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,11 +26,13 @@ public class MainActivity extends AppCompatActivity {
 
     EditText mText;
     private View mStart;
+    private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mTracker = AnalyticsTrackers.getInstance().get(AnalyticsTrackers.Target.APP);
         // Load an ad into the AdMob banner view.
         AdView adView = (AdView) findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder()
@@ -57,6 +61,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mTracker.setScreenName(AnalyticsTrackers.HOME);
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

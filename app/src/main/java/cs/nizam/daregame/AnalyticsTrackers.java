@@ -20,6 +20,11 @@ import java.util.Map;
  */
 public final class AnalyticsTrackers {
 
+  public static final String HOME = "Home";
+  public static final String HELP = "Help";
+  public static final String SETTINGS = "Settings";
+  public static final String GAME = "Game";
+
   public enum Target {
     APP,
     // Add more trackers here if you need, and update the code in #get(Target) below

@@ -14,6 +14,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 import cs.nizam.daregame.providers.ActionsContentProvider;
 
 public class DareList extends AppCompatActivity {
@@ -21,11 +24,13 @@ public class DareList extends AppCompatActivity {
     ListView listView;
     Button add;
     private ActionsListAdapter adapter;
+    private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dare_list);
+        mTracker = AnalyticsTrackers.getInstance().get(AnalyticsTrackers.Target.APP);
         if (getActionBar() != null) getActionBar().setDisplayHomeAsUpEnabled(true);
         add = (Button) findViewById(R.id.new_button);
 
@@ -80,6 +85,13 @@ public class DareList extends AppCompatActivity {
                 builder.show();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mTracker.setScreenName(AnalyticsTrackers.SETTINGS);
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     private Cursor getCursor() {
