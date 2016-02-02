@@ -7,15 +7,20 @@ import android.view.Menu;
 import android.webkit.WebView;
 import android.widget.TextView;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 public class HelpActivity extends Activity {
 
     WebView webView;
     TextView version;
+    private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help);
+        mTracker = AnalyticsTrackers.getInstance().get(AnalyticsTrackers.Target.APP);
 
         webView = (WebView) findViewById(R.id.webView);
         version = (TextView) findViewById(R.id.version);
@@ -28,6 +33,13 @@ public class HelpActivity extends Activity {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mTracker.setScreenName(AnalyticsTrackers.HELP);
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     @Override
